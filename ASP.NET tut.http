@@ -1,0 +1,6 @@
+@ASP.NET_tut_HostAddress = https://localhost:8000
+
+GET {{ASP.NET_tut_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
