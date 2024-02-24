@@ -1,3 +1,4 @@
+using ASP.NET_tut.Configurations;
 using ASP.NET_tut.Data;
 using ASP.NET_tut.MyLogging;
 using Microsoft.EntityFrameworkCore;
@@ -9,10 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 // builder.Services.AddScoped<IMyLogger, LogtoMemory>();
-builder.Logging.ClearProviders();
-builder.Logging.AddLog4Net();
+// builder.Logging.ClearProviders();
+builder.Services.AddSwaggerGen();
+builder.Services.AddAutoMapper(typeof(AutoMapperConfig));
 builder.Services.AddDbContext<CollegeDbContext>(options=>
 options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 

@@ -11,7 +11,7 @@ namespace ASP.NET_tut.Data
         {
             
         }
-        DbSet<Students>Students {get;set;}
+        public DbSet<Students>Students {get;set;}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

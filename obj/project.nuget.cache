@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "5/qBGqWTvqTAargZYlOOIGMudT1BNxqTUOAbjfjrX6qdGku1bmQ179S+LvtrOI2rVoi2lWSDSKV4oS+Uwgv0/Q==",
+  "dgSpecHash": "NCULYSlKcJ1O69NIC/Fw27RT7+D9W5l/oWyFhinR2sFPuKxMgmgSr6O/tur/cqoBB0Gu1dX69j0jxa0Ad52xoQ==",
   "success": true,
   "projectFilePath": "D:\\ASP.NET tut\\ASP.NET tut.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\ANANT TIWARI\\.nuget\\packages\\automapper\\13.0.1\\automapper.13.0.1.nupkg.sha512",
     "C:\\Users\\ANANT TIWARI\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\ANANT TIWARI\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",
     "C:\\Users\\ANANT TIWARI\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
