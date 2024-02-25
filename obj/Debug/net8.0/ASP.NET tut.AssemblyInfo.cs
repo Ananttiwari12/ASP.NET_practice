@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ASP.NET tut")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fda805eaa50717895d9886b75483b7f2b602d2b3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cbb172c0e49541931368b6f9feac82db960262d7")]
 [assembly: System.Reflection.AssemblyProductAttribute("ASP.NET tut")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ASP.NET tut")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

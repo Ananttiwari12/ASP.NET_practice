@@ -18,7 +18,8 @@ namespace ASP.NET_tut.Controllers
 
         private readonly ILogger<StudentController> _Ilogger = Ilogger;
         private readonly IMapper _mapper=mapper;
-        private readonly IStudentRepository _studentRepository= studentRepository;
+        // private readonly IStudentRepository _studentRepository= studentRepository;
+        private readonly ICollegeRepository<Students> _studentRepository= studentRepository;
 
         [HttpGet]
         [Route("All", Name ="GetAllStudents")]
@@ -56,7 +57,7 @@ namespace ASP.NET_tut.Controllers
 
         public async Task<ActionResult<StudentDTO>>GetStudentsbyIDAsync(int id){
             if(id<=0) return BadRequest($"{id} should be >=1");
-            var student= await _studentRepository.GetByIdAsync(id);
+            var student= await _studentRepository.GetAsync(x=>x.Id==id);
             if(student==null){
                 _Ilogger.LogError("Student with this Id does not found");
                 return NotFound($"student with {id} does not found");
@@ -79,7 +80,7 @@ namespace ASP.NET_tut.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<StudentDTO>> GetStudentsbyNameAsync(string name){
-            var student= await _studentRepository.GetByNameAsync(name);
+            var student= await _studentRepository.GetAsync(x=>x.Name.ToLower().Contains(name));
             if(student==null){
                 return NotFound($"student with name {name} does not found");
             }
@@ -104,7 +105,7 @@ namespace ASP.NET_tut.Controllers
             if(id<=0){
                 return BadRequest($"{id} is negative");
             }
-            var student= await _studentRepository.GetByIdAsync(id);
+            var student= await _studentRepository.GetAsync(x=>x.Id==id);
             if(student==null)return NotFound($"student with {id} does not found");
             await _studentRepository.DeleteStudentByidAsync(student);
             return Ok(true);
@@ -130,8 +131,8 @@ namespace ASP.NET_tut.Controllers
             //     DOB=model.DOB
             // };
             var student= _mapper.Map<Students>(dto);
-            var id= await _studentRepository.CreateStudentAsync(student);
-            dto.Id=id;
+            var createdStudent= await _studentRepository.CreateStudentAsync(student);
+            dto.Id=createdStudent.Id;
             return CreatedAtRoute("GetStudentById",new {id=dto.Id},dto);
         }
 
@@ -165,9 +166,9 @@ namespace ASP.NET_tut.Controllers
             //     Email=model.Email,
             //     DOB=model.DOB
             // };
-            var existingStudent= await _studentRepository.GetByIdAsync(dto.Id,true);
+            var existingStudent= await _studentRepository.GetAsync(x=>x.Id==dto.Id,true);
             if(existingStudent==null)return NotFound();
-            
+
             var newStudent = _mapper.Map<Students>(dto);
             await _studentRepository.UpdateStudentAsync(newStudent);
             return Ok();
