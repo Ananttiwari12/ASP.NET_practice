@@ -1,4 +1,5 @@
 using ASP.NET_tut.Data;
+using ASP.NET_tut.Data.Repository;
 using ASP.NET_tut.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
@@ -12,12 +13,12 @@ namespace ASP.NET_tut.Controllers
     [ApiController]
 
     // the [controller]  will be prefix of Controller in FirstController ==> First
-    public class StudentController(ILogger<StudentController> Ilogger, CollegeDbContext dbContext, IMapper mapper) : ControllerBase
+    public class StudentController(ILogger<StudentController> Ilogger, IMapper mapper, IStudentRepository studentRepository) : ControllerBase
     {
 
         private readonly ILogger<StudentController> _Ilogger = Ilogger;
-        private readonly CollegeDbContext _dbContext=dbContext;
         private readonly IMapper _mapper=mapper;
+        private readonly IStudentRepository _studentRepository= studentRepository;
 
         [HttpGet]
         [Route("All", Name ="GetAllStudents")]
@@ -39,7 +40,7 @@ namespace ASP.NET_tut.Controllers
             // }).ToList();
             
             // to fetch all
-            var students= await _dbContext.Students.ToListAsync();
+            var students= await _studentRepository.GetallAsync();
             var studentDTOdata= _mapper.Map<List<StudentDTO>>(students);
 
             _Ilogger.LogInformation("All data fetched");
@@ -55,7 +56,7 @@ namespace ASP.NET_tut.Controllers
 
         public async Task<ActionResult<StudentDTO>>GetStudentsbyIDAsync(int id){
             if(id<=0) return BadRequest($"{id} should be >=1");
-            var student=await _dbContext.Students.Where(x=>x.Id==id).FirstOrDefaultAsync();  
+            var student= await _studentRepository.GetByIdAsync(id);
             if(student==null){
                 _Ilogger.LogError("Student with this Id does not found");
                 return NotFound($"student with {id} does not found");
@@ -78,7 +79,7 @@ namespace ASP.NET_tut.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<StudentDTO>> GetStudentsbyNameAsync(string name){
-            var student=await _dbContext.Students.Where(x=>x.Name==name).FirstOrDefaultAsync();
+            var student= await _studentRepository.GetByNameAsync(name);
             if(student==null){
                 return NotFound($"student with name {name} does not found");
             }
@@ -103,10 +104,9 @@ namespace ASP.NET_tut.Controllers
             if(id<=0){
                 return BadRequest($"{id} is negative");
             }
-            var student= await _dbContext.Students.Where(x=>x.Id==id).FirstOrDefaultAsync();
+            var student= await _studentRepository.GetByIdAsync(id);
             if(student==null)return NotFound($"student with {id} does not found");
-            _dbContext.Students.Remove(student);
-            _dbContext.SaveChanges();
+            await _studentRepository.DeleteStudentByidAsync(student);
             return Ok(true);
         }
 
@@ -130,9 +130,8 @@ namespace ASP.NET_tut.Controllers
             //     DOB=model.DOB
             // };
             var student= _mapper.Map<Students>(dto);
-            await _dbContext.Students.AddAsync(student);
-            await _dbContext.SaveChangesAsync();
-            dto.Id=student.Id;
+            var id= await _studentRepository.CreateStudentAsync(student);
+            dto.Id=id;
             return CreatedAtRoute("GetStudentById",new {id=dto.Id},dto);
         }
 
@@ -147,10 +146,7 @@ namespace ASP.NET_tut.Controllers
             if(dto==null || dto.Id<=0) {
                 return BadRequest("cannot update student: try valid ID");
             }
-            var existingStudent=await _dbContext.Students.AsNoTracking().Where(x=>x.Id==dto.Id).FirstOrDefaultAsync();
-            if(existingStudent==null){
-                return BadRequest();
-            }
+           
 
             // one way of updation
 
@@ -169,9 +165,11 @@ namespace ASP.NET_tut.Controllers
             //     Email=model.Email,
             //     DOB=model.DOB
             // };
-            var newStudent= _mapper.Map<Students>(dto);
-            _dbContext.Update(newStudent);
-            _dbContext.SaveChanges();
+            var existingStudent= await _studentRepository.GetByIdAsync(dto.Id,true);
+            if(existingStudent==null)return NotFound();
+            
+            var newStudent = _mapper.Map<Students>(dto);
+            await _studentRepository.UpdateStudentAsync(newStudent);
             return Ok();
         }
     }
